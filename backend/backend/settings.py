@@ -11,6 +11,16 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()  # take environment variables from .env.
+
+# Code of your application, which uses environment variables (e.g. from `os.environ` or
+# `os.getenv`) as if they came from the actual environment.
+#This will load an environment file for us , we can use this having credentials for database & other things we need 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,8 +35,22 @@ SECRET_KEY = 'django-insecure-o_w)0khqnet5zrfgzw^^vc4#n1ak-aw9*&-)**sv!$ddorxqid
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"] # * here means it will allow any different host to host our django application when we deploy our application
 
+# we need these when we're working with jwt tokens - so specifying these configurations to work properly
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
 
 # Application definition
 
@@ -37,6 +61,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # our app we created
+    'api',
+    'rest_framework',
+    'corsheaders' # enabling 
 ]
 
 MIDDLEWARE = [
@@ -47,6 +75,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -121,3 +150,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#typically we allow specific origin , not all of them , in our case all of our origins would be different based on our deployement
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWS_CREDENTIALS = True
