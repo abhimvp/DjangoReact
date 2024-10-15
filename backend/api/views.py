@@ -26,6 +26,14 @@ class NoteListCreateView(generics.ListCreateAPIView):
             print(serializer.errors)
 
 class NoteDeleteView(generics.DestroyAPIView):
+    """_summary_
+    
+    Args:
+        generics (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     #   queryset = Note.objects.all()
     serializer_class = NoteSerializer
     permission_classes = [IsAuthenticated]
